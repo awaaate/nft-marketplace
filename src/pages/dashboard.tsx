@@ -1,12 +1,13 @@
-import { Box, Grid} from "@chakra-ui/react";
+import { Box, Grid } from "@chakra-ui/react";
 import React from "react";
 import { Card } from "../components/card/card.component";
 import { Container } from "../components/layout/Container";
 import { buyNFT } from "../lib/functions/buyNFT";
-import { useFetchNFTs } from "../lib/hooks/useFetchNFTs";
+import { useFetchCreatedNFTs } from "../lib/hooks/useFetchCreatedNFTs";
+import { useFetchMyNFTs } from "../lib/hooks/useFetchMyNFTs";
 
-function Index() {
-    const { data, error, mutate } = useFetchNFTs();
+function Dashboard() {
+    const { data, error, mutate } = useFetchCreatedNFTs();
     console.log(error);
     if (error) return <div>failed to load</div>;
     if (!data) return <div>loading...</div>;
@@ -28,4 +29,4 @@ function Index() {
     );
 }
 
-export default Index;
+export default Dashboard;
