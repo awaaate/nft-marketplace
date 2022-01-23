@@ -1,21 +1,12 @@
-import { Input } from "@chakra-ui/input";
-import { Box } from "@chakra-ui/layout";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/system";
-import { ethers } from "ethers";
 import { Form, Formik } from "formik";
 import { create as ipfsHttpClient } from "ipfs-http-client";
-import { add } from "lodash";
 import { useRouter } from "next/dist/client/router";
-import { ChangeEvent } from "react";
-import Web3Modal from "web3modal";
-import { NFT, NFTMarket } from "../../hardhat/types";
+import { Card } from "../components/card/card.component";
 import { CreateItem } from "../components/create-item/CreateItem";
-import {
-    Market_DATA,
-    nftAddress,
-    nftMarketAddress,
-    NFT_DATA,
-} from "../lib/constants/config";
+import { Container } from "../components/layout/Container";
+import { createSale } from "../lib/functions/createSale";
 
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0" as any);
 
@@ -35,77 +26,59 @@ function Create() {
             console.log(error);
         }
     }
-    async function createSale(url: string, values: any) {
-        const web3Model = new Web3Modal();
-        const connection = await web3Model.connect();
-        const provider = new ethers.providers.Web3Provider(connection);
 
-        const signer = provider.getSigner();
-        const NFTContract = new ethers.Contract(
-            nftAddress,
-            NFT_DATA.abi,
-            signer
-        ) as NFT;
-        console.log(values);
-        let transaction = await NFTContract.createToken(url);
-        const tx = await transaction.wait();
-
-        const event = tx.events[0];
-        const value = event.args[2];
-        const tokenId = value.toNumber();
-
-        const price = ethers.utils.parseUnits(values.price.toString(), "ether");
-
-        const NFTMarketContract = new ethers.Contract(
-            nftMarketAddress,
-            Market_DATA.abi,
-            signer
-        ) as NFTMarket;
-
-        const _listingPrice = await NFTMarketContract.getListingPrice();
-        const listingPrice = _listingPrice.toString();
-
-        transaction = await NFTMarketContract.createMarketItem(
-            nftAddress,
-            tokenId,
-            price,
-            { value: listingPrice }
-        );
-        await transaction.wait();
-
-        router.push("/");
-    }
     return (
         <Box>
             <Formik
                 initialValues={{
                     price: "",
-                    name: "",
+                    title: "",
                     description: "",
-                    fileUrl: "",
+                    coverUrl: "",
+                    pdfUrl: "",
                 }}
                 onSubmit={async (values) => {
-                    const { name, fileUrl, description } = values;
+                    const { title, price, pdfUrl, coverUrl, description } =
+                        values;
                     const data = JSON.stringify({
-                        name,
+                        title,
+                        price,
                         description,
-                        image: fileUrl,
+                        cover: coverUrl,
+                        pdf: pdfUrl,
                     });
                     const added = await client.add(data);
                     createSale(
                         `https://ipfs.infura.io/ipfs/${added.path}`,
-                        values
+                        values,
+                        () => {
+                            router.push("/");
+                        }
                     );
                 }}
             >
-                {({ getFieldProps, setFieldValue }) => (
-                    <CreateItem
-                        fileInputChange={(files) =>
-                            onFileInputChange(files, (url) =>
-                                setFieldValue("fileUrl", url)
-                            )
-                        }
-                    />
+                {({ getFieldProps, setFieldValue, values }) => (
+                    <Container  size="lg" display="flex" mt="16">
+                        <Box w="full">
+                            <CreateItem
+                                fileInputChange={(files) =>
+                                    onFileInputChange(files, (url) =>
+                                        setFieldValue("coverUrl", url)
+                                    )
+                                }
+                            />
+                        </Box>
+                        <Box w="full" bg="gray.50" mx="4">
+                            <Text m="4" fontSize="lg" textAlign="center">Preview</Text>
+                            <Card
+                                title={values.title}
+                                cover={values.coverUrl}
+                                description={values.description}
+                                price={values.price}
+                            />
+                        </Box>
+                        
+                    </Container>
                 )}
             </Formik>
         </Box>

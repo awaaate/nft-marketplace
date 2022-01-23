@@ -9,6 +9,7 @@ import {
 import useSWR from "swr";
 import { NFTMarket, NFT } from "../../../hardhat/types";
 import { fetchData } from "../functions/fetchData";
+import { parseNFT } from "../functions/parseNFT";
 async function loadNFTS() {
     try {
         const provider = new ethers.providers.JsonRpcProvider();
@@ -26,25 +27,7 @@ async function loadNFTS() {
         ) as NFTMarket;
 
         const data = await marketContract.fetchMarketItems();
-        const items = await Promise.all(
-            data.map(async (i) => {
-                const tokenURI = await tokenContract.tokenURI(i.tokenId);
-                const data = await fetchData(tokenURI);
-                const price = ethers.utils.formatUnits(
-                    i.price.toString(),
-                    "ether"
-                );
-                return {
-                    tokenId: i.tokenId.toString(),
-                    price,
-                    seller: i.seller,
-                    owner: i.owner,
-                    image: data.image,
-                    name: data.name,
-                    description: data.description,
-                };
-            })
-        );
+        const items = await parseNFT(tokenContract, data);
       
         return items;
     } catch (error) {

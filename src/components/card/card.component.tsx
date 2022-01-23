@@ -13,17 +13,21 @@ import {
 import React from "react";
 
 export interface CardProps {
-    image: string;
+    cover: string;
     description: string;
+    title: string;
     price: string;
+    actionButton?: React.ReactNode;
     boxProps?: BoxProps;
 }
 
 export const Card: React.FC<CardProps> = ({
-    image,
+    cover,
+    title,
     description,
     price,
     boxProps,
+    actionButton,
     ...props
 }) => {
     return (
@@ -45,30 +49,14 @@ export const Card: React.FC<CardProps> = ({
                     mt={-12}
                     pos={"relative"}
                     height={"230px"}
-                    _after={{
-                        transition: "all .3s ease",
-                        content: '""',
-                        w: "full",
-                        h: "full",
-                        pos: "absolute",
-                        top: 5,
-                        left: 0,
-                        backgroundImage: `url(${image})`,
-                        filter: "blur(15px)",
-                        zIndex: -1,
-                    }}
-                    _groupHover={{
-                        _after: {
-                            filter: "blur(20px)",
-                        },
-                    }}
+                    bg="gray.800"
                 >
                     <Image
                         rounded={"lg"}
                         height={230}
                         width={282}
                         objectFit={"cover"}
-                        src={image}
+                        src={cover}
                     />
                 </Box>
                 <Stack pt={10} align={"center"}>
@@ -77,16 +65,15 @@ export const Card: React.FC<CardProps> = ({
                         fontFamily={"body"}
                         fontWeight={500}
                     >
-                        {description}
+                        {title}
                     </Heading>
-                    <Stack direction={"row"} align={"center"}>
+                    <Stack direction={"column"} align={"center"}>
                         <Text fontWeight={800} fontSize={"xl"}>
-                            {price}
+                            {price || 1} Ξ
                         </Text>
+                        <Text textColor="gray.600">{description}</Text>
                     </Stack>
-                    <Button w="full" leftIcon={<UnlockIcon />} rounded="sm"> 
-                        Buy
-                    </Button>
+                    {actionButton}
                 </Stack>
             </Box>
         </Center>

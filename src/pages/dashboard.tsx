@@ -1,4 +1,4 @@
-import { Box, Grid } from "@chakra-ui/react";
+import { Box, Button, Grid } from "@chakra-ui/react";
 import React from "react";
 import { Card } from "../components/card/card.component";
 import { Container } from "../components/layout/Container";
@@ -17,11 +17,7 @@ function Dashboard() {
             <Container size="lg">
                 <Grid gridTemplateColumns={`repeat(3, 1fr)`}>
                     {data.map((item) => (
-                        <Card
-                            {...item}
-                            key={item.tokenId}
-                            boxProps={{ onClick: () => buyNFT(item, mutate) }}
-                        />
+                        <Card {...item} key={item.tokenId} />
                     ))}
                 </Grid>
             </Container>

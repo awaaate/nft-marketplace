@@ -30,8 +30,8 @@ export const CreateItem: React.FC<CreateItemProps> = ({ fileInputChange }) => {
     });
     const { isSubmitting } = useFormikContext();
     return (
-        <Container mt="8">
-            <FormLabel htmlFor="file">File</FormLabel>
+        <>
+            <FormLabel htmlFor="cover">Cover</FormLabel>
             <Box
                 {...getRootProps({ className: "dropzone" })}
                 color="gray.300"
@@ -39,17 +39,22 @@ export const CreateItem: React.FC<CreateItemProps> = ({ fileInputChange }) => {
                 rounded="sm"
                 my="4"
                 border="3px dashed"
+                textAlign="center"
+                cursor="pointer"
             >
                 <Center>
-                    <input {...getInputProps()} name="file" />
+                    <input {...getInputProps()} name="cover" />
                     <p>
-                        Drag 'n' drop some files here, or click to select files
+                        Drag 'n' drop the cover of your manga, <br />
+                        or click here to upload
                     </p>
                 </Center>
             </Box>
             <FormikForm>
                 <Stack>
-                    <TextField name="name" label="Name" />
+                    <TextField name="title" label="Title" />
+                    <TextField name="pdfUrl" label="Pdf Url" type="url" />
+
                     <TextArea
                         name="description"
                         label="Description"
@@ -69,6 +74,6 @@ export const CreateItem: React.FC<CreateItemProps> = ({ fileInputChange }) => {
                     </Button>
                 </Stack>
             </FormikForm>
-        </Container>
+        </>
     );
 };

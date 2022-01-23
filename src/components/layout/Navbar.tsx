@@ -8,18 +8,17 @@ import {
     IconButton,
     Button,
     Text,
-   
     useDisclosure,
     useColorModeValue,
     Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { NextLink } from "../shared/NextLink";
+import { Logo } from "../svg/logo";
+const Links = [{ name: "My Collection", link: "collection" }];
 
-const Links = ["Sell"];
-
-const NavLink: React.FC = ({ children }) => (
-    <Link
+const NavLink: React.FC<typeof Links[0]> = ({ name, link }) => (
+    <NextLink
         px={2}
         py={1}
         rounded={"md"}
@@ -27,10 +26,10 @@ const NavLink: React.FC = ({ children }) => (
             textDecoration: "none",
             bg: useColorModeValue("gray.200", "gray.700"),
         }}
-        href={children.toString().toLocaleLowerCase()}
+        href={link}
     >
-        {children}
-    </Link>
+        {name}
+    </NextLink>
 );
 
 export function Navbar() {
@@ -57,28 +56,30 @@ export function Navbar() {
                         onClick={isOpen ? onClose : onOpen}
                     />
                     <HStack spacing={8} alignItems={"center"}>
-                        <Box>Logo</Box>
+                        <NextLink href="/" textColor="blue.400">
+                            <Logo fill={"blue"} />
+                        </NextLink>
                         <HStack
                             as={"nav"}
                             spacing={4}
                             display={{ base: "none", md: "flex" }}
                         >
-                            {Links.map((link) => (
-                                <NavLink key={link}>{link}</NavLink>
+                            {Links.map((item) => (
+                                <NavLink key={item.link} {...item} />
                             ))}
                         </HStack>
                     </HStack>
                     <Flex alignItems={"center"}>
                         <NextLink href="/create">
-                            <Button
-                                size={"sm"}
-                                mr={4}
-                                leftIcon={<AddIcon />}
-                            >
+                            <Button size={"sm"} mr={4} leftIcon={<AddIcon />}>
                                 Create
                             </Button>
                         </NextLink>
-                        <NextLink display="flex" alignItems="center">
+                        <NextLink
+                            display="flex"
+                            alignItems="center"
+                            href="/dashboard"
+                        >
                             <Avatar size="sm"></Avatar>
                             <Text ml="2">Dashboard</Text>
                         </NextLink>
@@ -88,8 +89,8 @@ export function Navbar() {
                 {isOpen ? (
                     <Box pb={4} display={{ md: "none" }}>
                         <Stack as={"nav"} spacing={4}>
-                            {Links.map((link) => (
-                                <NavLink key={link}>{link}</NavLink>
+                            {Links.map((item) => (
+                                <NavLink key={item.link} {...item} />
                             ))}
                         </Stack>
                     </Box>

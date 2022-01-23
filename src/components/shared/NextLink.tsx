@@ -7,7 +7,7 @@ export const NextLink: React.FC<NextLinkProps & LinkProps> = ({
     ...props
 }) => {
     return (
-        <NLink href="" passHref>
+        <NLink href={props.href} passHref>
             <Link {...props}>{children}</Link>
         </NLink>
     );
